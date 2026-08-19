@@ -9,6 +9,13 @@ Before touching any field, ask the user which mode they want:
 > If the user leaves this blank: Ask them: "How long should this clip be? A short single-shot (4-8s, one continuous action) or a staged sequence (10-30s, multiple beats with timestamps)?"
 User input: [DURATION_MODE]
 ---
+## Realism defaults (always applied unless the user overrides)
+Seedance 2.5 tends to over-perform facial effort and audible breathing, which reads as unnatural in most footage. Bake these defaults into every prompt automatically — mention them explicitly in the relevant fields — unless the user asks for the opposite (e.g. "he's mid-sprint, gasping"):
+- **Facial expression:** natural, calm, and subtle. Micro-expressions only (soft focus, small eyebrow shift, subtle nod). No dramatic squinting, jaw clenching, gritted teeth, cheek-puffing, or grimacing. No visible strain unless the user explicitly asks for it.
+- **Lip and jaw movement:** minimal and closed-mouth by default. Lips stay lightly closed or barely parted. No visible chewing, mouthing, or exaggerated jaw drop. The only exception is dialogue, where lip-sync should be natural and precise.
+- **Breathing:** quiet and internal. No heavy inhales, no audible panting, no chest-heaving. If breath is mentioned in audio, wrap it as `<very quiet controlled nasal breathing barely audible in the background>` or omit entirely. No open-mouth breathing unless the user asks for it.
+> When these defaults conflict with the requested action (e.g. a max-effort deadlift, sprint, or fight scene), ask the user: "This action would normally involve visible strain and heavier breathing. Do you want to keep the subtle-expression / quiet-breath default, or should I let the effort show?"
+---
 ## The six fields
 ### Field 1: Subject
 Describe exactly who or what is in the shot. Think about:
@@ -30,6 +37,7 @@ Describe exactly what the subject is doing. Think about:
   ```
 - Physical movement: direction, speed, body position, what triggers it, what results
 - Keep each block to what happens in that window — no overflow between blocks
+- **Facial expression default:** always describe it as natural, calm, and subtle with micro-expressions only. Explicitly say "no visible strain, no jaw clenching, no cheek-puffing, mouth lightly closed" unless the user asks for visible effort. See Realism defaults above.
 > If the user leaves this blank: Ask them: "What is the subject doing? For short mode: one single action. For staged mode: give me the beats with rough timing and I'll format them as timestamped blocks. Or want me to suggest based on the subject and setting?"
 User input: [ACTION]
 ---
@@ -79,6 +87,7 @@ Think about:
 - Dialogue if applicable → `{ }`
 - Order and layering of sounds (what comes first, what builds, what fades)
 - Be specific: `<footsteps on wet pavement>` beats `<walking sounds>`
+- **Breathing default:** keep any breath sound quiet and internal. Default phrasing: `<very quiet controlled nasal breathing barely audible in the background>`. Never include heavy exhales, grunts, panting, or gasping unless the user explicitly asks for visible effort. See Realism defaults above.
 > If the user leaves this blank: Ask them: "What do we hear? Ambient sounds, action sounds, any music or dialogue? I'll wrap each in the right brackets."
 User input: [AUDIO]
 ---
@@ -157,4 +166,5 @@ Interior of a small New York City bodega on a rainy morning, warm tungsten overh
 - Anchors should be stated once at the top of the prompt, not repeated inside each beat.
 - If the user attaches multiple references, assign each an explicit role. Coherence degrades sharply when references have no stated job.
 - If the same character or setting appears across several generations, reuse the exact same description verbatim rather than rewording it — Seedance 2.5 rewards description reuse for cross-clip consistency.
+- **Always apply the Realism defaults** (subtle facial expression, minimal jaw/lip movement, quiet internal breathing) in every prompt unless the user explicitly asks for visible effort. Weave these into both the Action field's expression description and the Audio field's breath description on every generation — they should not need to be re-requested each turn. Add them to the Anchors block too when identity locking is used.
 - After outputting the prompt, ask: "Would you like to adjust anything before using this?"
